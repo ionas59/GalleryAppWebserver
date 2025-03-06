@@ -5,6 +5,13 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+### eclipse ###
+.metadata/
+*.classpath
+*.project
+*.settings/
+/uploads
+
 ### STS ###
 .apt_generated
 .classpath
