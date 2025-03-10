@@ -12,7 +12,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.springframework.stereotype.Service;
 
-
+// Deprecated due to refactor, the md5 now gets generated in the android app while loading the image
 @Service
 public class Md5HashGenerator {
 
