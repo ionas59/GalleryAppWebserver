@@ -32,6 +32,20 @@ public class JDBCController  {
 		allMD5 = jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString(1));
 		return allMD5;
 	}
+
+	public List<DTOs.ImageTags> getImageTags() {
+		List<DTOs.ImageTags> allImageTags;
+		String sql = "SELECT images.md5, tags.name AS tagName FROM images \r\n"
+				+ "INNER JOIN image_tags ON images.imageId = image_tags.imageId\r\n"
+				+ "INNER JOIN tags ON tags.tagId = image_tags.tagId;";
+		allImageTags = jdbcTemplate.query(sql, (rs, rowNum) -> new DTOs.ImageTags(rs.getString(1),rs.getString(2)));
+		for(DTOs.ImageTags d : allImageTags)  {
+			System.out.println();
+			System.out.println(d.md5);
+			System.out.println(d.tagName);
+		}
+		return allImageTags;
+	}
 	
 	
 	

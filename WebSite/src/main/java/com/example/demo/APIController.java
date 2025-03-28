@@ -65,6 +65,15 @@ public class APIController {
     	
     }
     
+    @GetMapping("/getImageTags")
+    public List<DTOs.ImageTags> getImageTags() {
+    	
+    	List<DTOs.ImageTags> allImageTags = jdbccontroller.getImageTags();
+    	
+    	return allImageTags;
+    	
+    }
+    
     @PostMapping(value = "/uploadImageUris", consumes = "multipart/form-data")
     public ResponseEntity<String> uploadImages(
     		@RequestParam("images") List<MultipartFile> images,
