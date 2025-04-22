@@ -13,4 +13,15 @@ public class DTOs {
 
     }
     
+    public static class Tags {
+        public int tagId;
+        public String name;
+
+        public Tags(int id, String tagName) {
+            this.tagId = id;
+            this.name = tagName;
+        }
+
+    }
+    
 }

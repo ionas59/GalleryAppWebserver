@@ -7,6 +7,8 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.example.demo.DTOs.Tags;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -45,6 +47,19 @@ public class JDBCController  {
 			System.out.println(d.tagName);
 		}
 		return allImageTags;
+	}
+
+	public List<Tags> getTags() {
+		List<DTOs.Tags> allTags;
+		String sql = "SELECT tagId, name FROM tags";
+				
+		allTags = jdbcTemplate.query(sql, (rs, rowNum) -> new DTOs.Tags(rs.getInt(1),rs.getString(2)));
+		for(DTOs.Tags d : allTags)  {
+			System.out.println();
+			System.out.println(d.tagId);
+			System.out.println(d.name);
+		}
+		return allTags;
 	}
 	
 	
