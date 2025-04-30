@@ -3,16 +3,22 @@ package com.example.demo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.DTOs.Tags;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.swing.tree.RowMapper;
 
 // @Repository cuz it interacts with the db
 @Repository
@@ -23,9 +29,51 @@ public class JDBCController  {
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 
+	public void createTag(String name) {
+		String sql = "INSERT INTO tags(name) VALUES(?)";
+		
+		try {
+			jdbcTemplate.update(sql,name);
+		
+		} catch (DataAccessException e) {
+			System.out.println(e);
+		}
+	}
 	
-	public void importIntoImageDB(String name, String path, String md5) {
-		jdbcTemplate.update("INSERT INTO images(name, path, md5) VALUES (?,?,?)",name,path, md5);
+	public void importIntoImageTable(String name, String path, String md5) {
+		String sql3 = "INSERT INTO images(name,md5,path) VALUES(?,?,?)";
+		jdbcTemplate.update(sql3,name,md5,path);
+	}
+	
+	public void importIntoImageTagsTable(int imageId, int tagId) {
+		String sql3 = "INSERT INTO image_tags(imageId,tagId) VALUES(?,?)";
+		if(imageId > 0 && tagId > 0) {
+			jdbcTemplate.update(sql3,imageId,tagId);
+		} 
+		
+	}
+	
+	public void importIntoImageDB(String name, String path, String md5, String tag) {
+		String sql = "SELECT imageId FROM images WHERE md5 =?";
+		String sql2 = "SELECT tagId FROM tags WHERE name =?";
+		
+		try {
+			
+			importIntoImageTable(name,path,md5);
+			
+			//queryForObject return only a single row
+			int imageId = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getInt("imageId"), md5);
+			int tagId = jdbcTemplate.queryForObject(sql2, (rs, rowNum) -> rs.getInt("tagId"), tag);
+			System.out.println("ImageId:" + imageId);
+			System.out.println("TagId:" + tagId);
+			importIntoImageTagsTable(imageId, tagId);
+			
+		} catch (DataAccessException e) {
+			System.out.println(e);
+		}
+		
+		
+	    		
 	}
 	
 	public List<String> getAllMD5() {

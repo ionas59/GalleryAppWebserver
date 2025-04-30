@@ -82,11 +82,12 @@ public class APIController {
     	return allTags;
     	
     }
-    
+      
     @PostMapping(value = "/uploadImageUris", consumes = "multipart/form-data")
     public ResponseEntity<String> uploadImages(
     		@RequestParam("images") List<MultipartFile> images,
-    		@RequestParam("md5") List<String> md5 )throws NoSuchAlgorithmException {
+    		@RequestParam("md5") List<String> md5,
+    		@RequestParam("selectedTags") List<String> selectedTags )throws NoSuchAlgorithmException {
         try {
             
             if (!uploadDir.exists()) {
@@ -100,19 +101,13 @@ public class APIController {
             	
             	 
             	String currentMD5 = md5.get(i);
-            	/* issue that needs to be adressed in the future is that the image will not be saved locally
-            	 * if the same imagename exists... another issue will be that you cannot synch the image anymore even after
-            	 * renaming it due to the md5 being in the database, so it will display as being synched while not being synched
-            	 *
-            	 * quick and dirty fix might be to first scan the folder and check if the filename already exists, if yes change it.
-            	 */ 
             	String newImageName = returnValidFileName(images.get(i).getOriginalFilename());
             	
                 File file = new File(uploadDir, newImageName);
                 images.get(i).transferTo(file);
                 System.out.println("Received file: " + file.getAbsolutePath());
-                
-                jdbccontroller.importIntoImageDB(file.getName(), file.getAbsolutePath(), md5.get(i).replace("\"", "") );
+                System.out.println("SelectedTags: " + selectedTags.get(i));
+                jdbccontroller.importIntoImageDB(file.getName(), file.getAbsolutePath(), md5.get(i).replace("\"", ""),selectedTags.get(i).replace("\"", ""));
                 }
 
             return ResponseEntity.ok("Upload successful");
